@@ -72,6 +72,73 @@ node_name_map = {name.lower(): name for name in graph.keys()}
 def clear_screen():
     os.system('cls' if platform.system() == 'Windows' else 'clear')
 
+def add_node(graph):
+    clear_screen()
+    print("=== ADD NODE TO GRAPH ===")
+    new_node = input("Enter the name of the new node: ").strip()
+
+    if new_node in graph:
+        print(f"Node '{new_node}' already exists.")
+    else:
+        while True:
+            try:
+                x = float(input("Enter X coordinate for the node: "))
+                y = float(input("Enter Y coordinate for the node: "))
+                coordinates[new_node] = (x, y)
+                break
+            except ValueError:
+                print("Invalid coordinates. Please enter numeric values for X and Y.")
+
+        is_non_eatery = input("Is this a NON-eatery node? (y/n): ").strip().lower()
+        if is_non_eatery == "y":
+            non_eatery_nodes.add(new_node)
+
+        graph[new_node] = {}
+        node_name_map[new_node.lower()] = new_node
+        print(f"\nNode '{new_node}' has been added with coordinates ({x}, {y}).")
+
+        while True:
+            connect_to = input("Enter a node to connect to (or type 'done' to finish): ").strip()
+            if connect_to.lower() == 'done':
+                break
+            existing_node = node_name_map.get(connect_to.lower())
+            if existing_node is None:
+                print(f"Node '{connect_to}' does not exist. Please enter a valid node.")
+                continue
+            try:
+                cost = int(input(f"Enter cost from '{new_node}' to '{existing_node}': "))
+            except ValueError:
+                print("Invalid cost. Please enter a number.")
+                continue
+            graph[new_node][existing_node] = cost
+            graph[existing_node][new_node] = cost
+            print(f"Connected '{new_node}' <-> '{existing_node}' with cost {cost}.")
+
+    input("\nPress Enter to return to the main menu...")
+    clear_screen()
+
+def remove_node(graph):
+    clear_screen()
+    print("=== REMOVE NODE FROM GRAPH ===")
+
+    node_to_remove = input("Enter the name of the node to remove: ").strip()
+    real_node = node_name_map.get(node_to_remove.lower())
+
+    if real_node is None or real_node not in graph:
+        print(f"Error: Node '{node_to_remove}' does not exist in the graph.")
+        input("Press Enter to return to the menu...")
+        return
+
+    for neighbor in list(graph[real_node].keys()):
+        graph[neighbor].pop(real_node, None)
+    graph.pop(real_node)
+
+    coordinates.pop(real_node, None)
+    node_name_map.pop(real_node.lower(), None)
+
+    print(f"Node '{real_node}' removed successfully.")
+    input("Press Enter to return to the menu...")
+
 # UCS
 def uniform_cost_search(graph, start, goal):
     # Validate nodes first
@@ -252,11 +319,9 @@ while True:
     choice = input("Choose an option: ")
 
     if choice == "1":
-       print("Add node") # Placeholder
-        # add_node(graph)
+        add_node(graph)
     elif choice == "2":
-       print("Remove node") # Placeholder
-        # remove_node(graph)
+        remove_node(graph)
     elif choice == "3":
         clear_screen() # Clear screen for macOS/Linux
         while True:
