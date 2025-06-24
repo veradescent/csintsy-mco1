@@ -1,5 +1,7 @@
 import math # For euclidean distance
 import heapq # Implement priority queue
+import os # For screen clearing
+from PIL import Image # For opening images
 
 graph = {
     "Sherwood Place": {"Jollibee": 60},
@@ -59,6 +61,11 @@ coordinates = {
 
 # UCS
 def uniform_cost_search(graph, start, goal):
+    # Validate nodes first
+    is_valid, error_message = validate_nodes(graph, start, goal)
+    if not is_valid:
+        return None, None, error_message
+    
     to_visit = []
     heapq.heappush(to_visit, (0, start)) # Push start node to priority queue
 
@@ -71,67 +78,110 @@ def uniform_cost_search(graph, start, goal):
         if current == goal:
             break
 
-        for node, edge_cost in graph[current]
+        for node, edge_cost in graph[current].items():
             new_cost = cost_so_far[current] + edge_cost # Cost Accumulation
             if node not in cost_so_far or new_cost < cost_so_far[node]:
                 cost_so_far[node] = new_cost
                 heapq.heappush(to_visit, (new_cost, node))
                 visited[node] = current
 
+    # Trace optimal path
     path = []
     current = goal
     while current is not None:
         path.append(current)
         current = visited[current]
     path.reverse()
+    return path, cost_so_far[goal], None
 
-return path, cost_so_far[goal]
-                
-                
-
+# Error detection function
+def validate_nodes(graph, start, goal):
+    """
+    Check if start and goal nodes exist in the graph.
+    Returns (is_valid, error_message)
+    """
+    if start not in graph:
+        return False, f"Start node '{start}' does not exist in the graph."
+    
+    if goal not in graph:
+        return False, f"Goal node '{goal}' does not exist in the graph."
+    
+    return True, ""
 
 # A*
 def a_star(graph, start, goal):
-  to_visit = [] 
-  heapq.heappush(to_visit, (0, start)) # Push start node to priority queue
+    # Validate nodes first
+    is_valid, error_message = validate_nodes(graph, start, goal)
+    if not is_valid:
+        return None, None, error_message
+    
+    to_visit = [] 
+    heapq.heappush(to_visit, (0, start)) # Push start node to priority queue
 
-  visited = {start: None}
-  cost_so_far = {start: 0} 
+    visited = {start: None}
+    cost_so_far = {start: 0} 
       
-  while to_visit:
-      current_priority, current = heapq.heappop(to_visit)
+    while to_visit:
+        current_priority, current = heapq.heappop(to_visit)
 
-      if current == goal:
-          break
-      
-      for node, cost in graph[current].items():
-          point1 = coordinates.get(current)
-          point2 = coordinates.get(goal)
-          heuristic = math.dist(point1, point2) # Compute euclidean distance as heuristic
-          new_cost = cost_so_far[current] + cost
-          if node not in cost_so_far or new_cost < cost_so_far[node]:
-              cost_so_far[node] = new_cost
-              priority = new_cost + heuristic # Cumulative cost
-              heapq.heappush(to_visit, (priority, node)) # Push node to priority queue
-              visited[node] = current
+        if current == goal:
+            break
+        
+        for node, cost in graph[current].items():
+            point1 = coordinates.get(current)
+            point2 = coordinates.get(goal)
+            heuristic = math.dist(point1, point2) # Compute euclidean distance as heuristic
+            new_cost = cost_so_far[current] + cost
+            if node not in cost_so_far or new_cost < cost_so_far[node]:
+                cost_so_far[node] = new_cost
+                priority = new_cost + heuristic # Cumulative cost
+                heapq.heappush(to_visit, (priority, node)) # Push node to priority queue
+                visited[node] = current
 
-  # Trace optimal path
-  path = []
-  current = goal
-  while current:
-      path.append(current)
-      current = visited[current]
-  path.reverse()
+    # Trace optimal path
+    path = []
+    current = goal
+    while current:
+        path.append(current)
+        current = visited[current]
+    path.reverse()
 
-  return path, cost_so_far[goal]
+    return path, cost_so_far[goal], None
 
+# Error recovery function
+def handle_error_recovery():
+    """
+    Prompt user with three options after an error:
+    1) Try Again
+    2) View Graph
+    3) Exit to main menu
+    """
+    while True:
+        print("\nWhat would you like to do?")
+        print("1) Try Again")
+        print("2) View Graph")
+        print("3) Exit to main menu")
+        
+        choice = input("Enter your choice (1-3): ")
+        
+        if choice == "1":
+            return "retry"
+        elif choice == "2":
+            return "view_graph"
+        elif choice == "3":
+            return "exit_to_menu"
+        else:
+            print("Invalid choice. Please enter 1, 2, or 3.")
+
+# Main menu
 while True:
     print("\n--- Graph Menu ---")
     print("1) Add Node to Graph")
     print("2) Remove Node from Graph")
     print("3) Uniform Cost Search")
     print("4) A* Search")
-    print("5) Exit")
+    print("5) View Graph")
+    print("6) Exit")
 
     choice = input("Choose an option: ")
 
@@ -142,20 +192,118 @@ while True:
        print("Remove node") # Placeholder
         # remove_node(graph)
     elif choice == "3":
-        print("UCS") # Placeholder
-        '''
-        start = input("Enter start node: ")
-        goal = input("Enter goal node: ")
-        ucs(graph, start, goal)
-        '''
+        os.system('clear')  # Clear screen for macOS/Linux
+        while True:
+            print("=== UNIFORM COST SEARCH (UCS) ===")
+            start = input("Enter start node: ")
+            goal = input("Enter goal node: ")
+            
+            path, total_cost, error = uniform_cost_search(graph, start, goal)
+            
+            if path:
+                print("Optimal path:", " -> ".join(path))
+                print("Total cost:", total_cost)
+                
+                # Prompt user to return to main menu or exit
+                while True:
+                    user_choice = input("\nPress 'y' to return to main menu or 'n' to exit: ").lower()
+                    if user_choice == 'y':
+                        os.system('clear')  # Clear screen before returning to main menu
+                        break
+                    elif user_choice == 'n':
+                        print("Exiting...")
+                        exit()
+                    else:
+                        print("Invalid input. Please enter 'y' or 'n'.")
+                break
+            else:
+                print(error)
+                recovery_choice = handle_error_recovery()
+                
+                if recovery_choice == "retry":
+                    os.system('clear')  # Clear screen before retry
+                    continue
+                elif recovery_choice == "view_graph":
+                    # Dummy path for the image file
+                    image_path = "graph_visualization.png"
+                    try:
+                        # Open the image using Pillow
+                        img = Image.open(image_path)
+                        img.show()  # This will open the image in the default image viewer
+                        print(f"Graph visualization opened: {image_path}")
+                    except FileNotFoundError:
+                        print(f"Image file not found: {image_path}")
+                        print("Please ensure the graph visualization image exists.")
+                    except Exception as e:
+                        print(f"Error opening image: {e}")
+                    input("Press Enter to continue...")
+                    continue
+                elif recovery_choice == "exit_to_menu":
+                    os.system('clear')  # Clear screen before returning to main menu
+                    break
     elif choice == "4":
-        start = input("Enter your current location: ")
-        goal = input("Enter your goal eatery: ")
-        path, total_cost = a_star(graph, start, goal)
+        os.system('clear')  # Clear screen for macOS/Linux
+        while True:
+            print("=== A* SEARCH ===")
+            start = input("Enter your current location: ")
+            goal = input("Enter your goal eatery: ")
+            path, total_cost, error = a_star(graph, start, goal)
 
-        print("Optimal path:", " -> ".join(path))
-        print("Total cost:", total_cost)
+            if path:
+                print("Optimal path:", " -> ".join(path))
+                print("Total cost:", total_cost)
+                
+                # Prompt user to return to main menu or exit
+                while True:
+                    user_choice = input("\nPress 'y' to return to main menu or 'n' to exit: ").lower()
+                    if user_choice == 'y':
+                        os.system('clear')  # Clear screen before returning to main menu
+                        break
+                    elif user_choice == 'n':
+                        print("Exiting...")
+                        exit()
+                    else:
+                        print("Invalid input. Please enter 'y' or 'n'.")
+                break
+            else:
+                print(error)
+                recovery_choice = handle_error_recovery()
+                
+                if recovery_choice == "retry":
+                    os.system('clear')  # Clear screen before retry
+                    continue
+                elif recovery_choice == "view_graph":
+                    # Dummy path for the image file
+                    image_path = "graph_visualization.png"
+                    try:
+                        # Open the image using Pillow
+                        img = Image.open(image_path)
+                        img.show()  # This will open the image in the default image viewer
+                        print(f"Graph visualization opened: {image_path}")
+                    except FileNotFoundError:
+                        print(f"Image file not found: {image_path}")
+                        print("Please ensure the graph visualization image exists.")
+                    except Exception as e:
+                        print(f"Error opening image: {e}")
+                    input("Press Enter to continue...")
+                    continue
+                elif recovery_choice == "exit_to_menu":
+                    os.system('clear')  # Clear screen before returning to main menu
+                    break
     elif choice == "5":
+        # Dummy path for the image file
+        image_path = "graph_visualization.png"
+        try:
+            # Open the image using Pillow
+            img = Image.open(image_path)
+            img.show()  # This will open the image in the default image viewer
+            print(f"Graph visualization opened: {image_path}")
+        except FileNotFoundError:
+            print(f"Image file not found: {image_path}")
+            print("Please ensure the graph visualization image exists.")
+        except Exception as e:
+            print(f"Error opening image: {e}")
+    elif choice == "6":
         print("Exiting...")
         break
     else:
