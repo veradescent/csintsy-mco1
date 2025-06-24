@@ -1,5 +1,7 @@
-# csintsy-mco1
 
+---
+
+````
 # Project Setup & Run Instructions
 
 ##  Windows
@@ -25,7 +27,7 @@
 
 ---
 
-## macOS
+##  macOS
 
 1. Create a virtual environment:
 
@@ -52,3 +54,4 @@
    ```
 
 ---
+
