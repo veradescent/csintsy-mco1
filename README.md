@@ -1,17 +1,15 @@
 
 ---
+# CSINTSY MCO1
 
-````
-# Project Setup & Run Instructions
-
-##  Windows
-
+## Windows
+   
 1. Make sure `python` (`py`) and `pip` are installed.  
    You can check by running:
    ```bash
    py --version
    pip --version
-````
+   ```
 
 2. Install required packages:
 
@@ -27,7 +25,7 @@
 
 ---
 
-##  macOS
+## macOS
 
 1. Create a virtual environment:
 
@@ -54,4 +52,5 @@
    ```
 
 ---
+
 
