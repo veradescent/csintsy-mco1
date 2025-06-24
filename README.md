@@ -5,7 +5,7 @@
 ## Windows
    
 1. Make sure `python` (`py`) and `pip` are installed.  
-   You can check by running:
+   You can check by running the following in the terminal:
    ```bash
    py --version
    pip --version
@@ -27,25 +27,32 @@
 
 ## macOS
 
-1. Create a virtual environment:
+1. Make sure `python` (`py`) and `pip` are installed.  
+   You can check by running the following in the terminal:
+   ```bash
+   py --version
+   pip --version
+   ```
+
+2. Create a virtual environment:
 
    ```bash
    python3 -m venv venv
    ```
 
-2. Activate the virtual environment:
+3. Activate the virtual environment:
 
    ```bash
    source venv/bin/activate
    ```
 
-3. Install required packages:
+4. Install required packages:
 
    ```bash
    pip install networkx matplotlib
    ```
 
-4. Run the script:
+5. Run the script:
 
    ```bash
    python main.py
