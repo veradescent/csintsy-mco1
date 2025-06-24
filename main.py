@@ -5,6 +5,7 @@ from PIL import Image # For opening images
 import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+import platform
 
 graph = {
     "Sherwood Place": {"Jollibee": 60},
@@ -65,6 +66,11 @@ non_eatery_nodes = {
     "Gokongwei Hall", "Taft-Castro", "Agno-Castro", "Agno-Fidel A. Reyes", "Taft-Dagonoy",
     "Leon Guinto-Dagonoy", "Leon Guinto-Estrada", "Taft-Estrada", "North Gate", "South Gate"
 }
+
+node_name_map = {name.lower(): name for name in graph.keys()}
+
+def clear_screen():
+    os.system('cls' if platform.system() == 'Windows' else 'clear')
 
 # UCS
 def uniform_cost_search(graph, start, goal):
@@ -252,11 +258,13 @@ while True:
        print("Remove node") # Placeholder
         # remove_node(graph)
     elif choice == "3":
-        os.system('clear')  # Clear screen for macOS/Linux
+        clear_screen() # Clear screen for macOS/Linux
         while True:
             print("=== UNIFORM COST SEARCH (UCS) ===")
-            start = input("Enter start node: ").strip().title()
-            goal = input("Enter goal node: ").strip().title()
+            user_start = input("Enter your current location: ").strip()
+            user_goal = input("Enter your goal eatery: ").strip()
+            start = node_name_map.get(user_start.lower())
+            goal = node_name_map.get(user_goal.lower())
             path, total_cost, error = uniform_cost_search(graph, start, goal)
             
             if path:
@@ -278,7 +286,7 @@ while True:
                 while True:
                     user_choice = input("\nPress 'y' to return to main menu or 'n' to exit: ").lower()
                     if user_choice == 'y':
-                        os.system('clear')
+                        clear_screen()
                         break
                     elif user_choice == 'n':
                         print("Exiting...")
@@ -291,7 +299,7 @@ while True:
                 recovery_choice = handle_error_recovery()
                 
                 if recovery_choice == "retry":
-                    os.system('clear')  # Clear screen before retry
+                    clear_screen()  # Clear screen before retry
                     continue
                 elif recovery_choice == "view_graph":
                     # Regenerate the graph image before viewing (same as option 5)
@@ -307,17 +315,19 @@ while True:
                     except Exception as e:
                         print(f"Error opening image: {e}")
                     input("Press Enter to continue...")
-                    os.system('clear')
+                    clear_screen()
                     continue
                 elif recovery_choice == "exit_to_menu":
-                    os.system('clear')  # Clear screen before returning to main menu
+                    clear_screen()  # Clear screen before returning to main menu
                     break
     elif choice == "4":
-        os.system('clear')  # Clear screen for macOS/Linux
+        clear_screen() # Clear screen for macOS/Linux
         while True:
             print("=== A* SEARCH ===")
-            start = input("Enter your current location: ").strip().title()
-            goal = input("Enter your goal eatery: ").strip().title()
+            user_start = input("Enter your current location: ").strip()
+            user_goal = input("Enter your goal eatery: ").strip()
+            start = node_name_map.get(user_start.lower())
+            goal = node_name_map.get(user_goal.lower())
             path, total_cost, error = a_star(graph, start, goal)
 
             if path:
@@ -339,7 +349,7 @@ while True:
                 while True:
                     user_choice = input("\nPress 'y' to return to main menu or 'n' to exit: ").lower()
                     if user_choice == 'y':
-                        os.system('clear')
+                        clear_screen()
                         break
                     elif user_choice == 'n':
                         print("Exiting...")
@@ -352,7 +362,7 @@ while True:
                 recovery_choice = handle_error_recovery()
                 
                 if recovery_choice == "retry":
-                    os.system('clear')  # Clear screen before retry
+                    clear_screen()  # Clear screen before retry
                     continue
                 elif recovery_choice == "view_graph":
                     # Regenerate the graph image before viewing (same as option 5)
@@ -368,13 +378,13 @@ while True:
                     except Exception as e:
                         print(f"Error opening image: {e}")
                     input("Press Enter to continue...")
-                    os.system('clear')
+                    clear_screen()
                     continue
                 elif recovery_choice == "exit_to_menu":
-                    os.system('clear')  # Clear screen before returning to main menu
+                    clear_screen() # Clear screen before returning to main menu
                     break
     elif choice == "5":
-        os.system('clear')  # Clear screen for macOS/Linux
+        clear_screen()  # Clear screen for macOS/Linux
         print("=== VIEW GRAPH ===")
         # Generate the graph image before viewing (no highlight)
         generate_graph_image(graph, coordinates)
@@ -392,7 +402,7 @@ while True:
         while True:
             user_choice = input("\nPress 'y' to return to main menu or 'n' to exit: ").lower()
             if user_choice == 'y':
-                os.system('clear')  # Clear screen before returning to main menu
+                clear_screen()  # Clear screen before returning to main menu
                 break
             elif user_choice == 'n':
                 print("Exiting...")
