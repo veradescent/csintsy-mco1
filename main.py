@@ -2,6 +2,9 @@ import math # For euclidean distance
 import heapq # Implement priority queue
 import os # For screen clearing
 from PIL import Image # For opening images
+import networkx as nx
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 
 graph = {
     "Sherwood Place": {"Jollibee": 60},
@@ -21,11 +24,10 @@ graph = {
     "Drip Kofi": {"Leon Guinto-Dagonoy": 84, "Chomp Chomp": 35},
     "Chomp Chomp": {"Drip Kofi": 35, "Leon Guinto-Estrada": 42},
     "Leon Guinto-Estrada": {"Chomp Chomp": 42, "Taft-Estrada": 95},
-    "Taft-Estrada": {"Leon Guinto-Estrada": 95, "Starbucks": 29, "North Gate": 99},
+    "Taft-Estrada": {"South Gate": 41, "Leon Guinto-Estrada": 95, "North Gate": 99},
     "North Gate": {"Taft-Estrada": 99, "Taft-Dagonoy": 72, "CBTL": 73},
     "CBTL": {"North Gate": 73},
-    "Starbucks": {"Taft-Estrada": 29, "South Gate": 12},
-    "South Gate": {"Starbucks": 12, "McDonald's": 54, "Kitchen City": 82},
+    "South Gate": {"Taft-Estrada": 41, "McDonald's": 54, "Kitchen City": 82},
     "McDonald's": {"South Gate": 54, "Tomo Coffee": 28},
     "Tomo Coffee": {"McDonald's": 28},
     "Kitchen City": {"South Gate": 82},
@@ -52,11 +54,16 @@ coordinates = {
     "Taft-Estrada": (14.5644, 120.99435),
     "North Gate": (14.56518, 120.99396),
     "CBTL": (14.56497, 120.99333),
-    "Starbucks": (14.56417, 120.99447),
     "South Gate": (14.56409, 120.99449),
     "McDonald's": (14.56363, 120.99465),
     "Tomo Coffee": (14.56342, 120.99476),
     "Kitchen City": (14.56382, 120.99379),
+}
+
+# List of non-eatery nodes that cannot be used as end goals
+non_eatery_nodes = {
+    "Gokongwei Hall", "Taft-Castro", "Agno-Castro", "Agno-Fidel A. Reyes", "Taft-Dagonoy",
+    "Leon Guinto-Dagonoy", "Leon Guinto-Estrada", "Taft-Estrada", "North Gate", "South Gate"
 }
 
 # UCS
@@ -97,15 +104,16 @@ def uniform_cost_search(graph, start, goal):
 # Error detection function
 def validate_nodes(graph, start, goal):
     """
-    Check if start and goal nodes exist in the graph.
+    Check if start and goal nodes exist in the graph and if goal is a valid eatery.
     Returns (is_valid, error_message)
     """
     if start not in graph:
         return False, f"Start node '{start}' does not exist in the graph."
-    
     if goal not in graph:
         return False, f"Goal node '{goal}' does not exist in the graph."
-    
+    # Non-eatery nodes that cannot be used as end goals
+    if goal in non_eatery_nodes:
+        return False, f"Error: '{goal}' is not an eatery and cannot be used as the end goal. Please choose a valid eatery as the goal."
     return True, ""
 
 # A*
@@ -173,6 +181,58 @@ def handle_error_recovery():
         else:
             print("Invalid choice. Please enter 1, 2, or 3.")
 
+# Function to generate and save the graph image
+def generate_graph_image(graph, coordinates, image_path="graph_visualization.png", highlight_path=None, total_cost=None):
+    G = nx.Graph()
+    for node, pos in coordinates.items():
+        G.add_node(node, pos=pos)
+    for node, neighbors in graph.items():
+        for neighbor, weight in neighbors.items():
+            if not G.has_edge(node, neighbor):
+                G.add_edge(node, neighbor, weight=weight)
+    pos = {node: (lon, lat) for node, (lat, lon) in coordinates.items()}
+    plt.figure(figsize=(30, 20))
+    # Node coloring
+    eatery_nodes = set(G.nodes()) - non_eatery_nodes
+    node_colors = []
+    for node in G.nodes():
+        if highlight_path and len(highlight_path) > 1:
+            if node == highlight_path[0] or node == highlight_path[-1]:
+                node_colors.append('lightgreen')  # Start or End (light green)
+            elif node in eatery_nodes:
+                node_colors.append('plum')  # Eatery
+            else:
+                node_colors.append('lightblue')    # Non-eatery
+        else:
+            if node in eatery_nodes:
+                node_colors.append('plum')  # Eatery
+            else:
+                node_colors.append('lightblue')    # Non-eatery
+    # Highlight optimal path if provided (draw first, with lower opacity)
+    if highlight_path and len(highlight_path) > 1:
+        path_edges = list(zip(highlight_path, highlight_path[1:]))
+        nx.draw_networkx_edges(G, pos, edgelist=path_edges, edge_color='red', width=3, alpha=0.5)
+    # Draw all edges in gray and nodes/labels on top
+    nx.draw(G, pos, with_labels=True, node_color=node_colors, edge_color='gray', node_size=1400, font_size=12)
+    edge_labels = nx.get_edge_attributes(G, 'weight')
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=10)
+    # Add total cost as text on the image if provided
+    if total_cost is not None and highlight_path and len(highlight_path) > 1:
+        plt.text(0.5, 0.97, f"Total cost: {total_cost}", fontsize=24, color='black', ha='center', va='top', transform=plt.gca().transAxes, bbox=dict(facecolor='white', alpha=0.7, edgecolor='none'))
+    # Add legend
+    legend_handles = [
+        mpatches.Patch(color='plum', label='Eatery'),
+        mpatches.Patch(color='lightblue', label='Non-eatery'),
+    ]
+    if highlight_path and len(highlight_path) > 1:
+        legend_handles.append(mpatches.Patch(color='lightgreen', label='Start/End Node'))
+        legend_handles.append(mpatches.Patch(color='red', label='Best Path', alpha=0.5))
+    plt.legend(handles=legend_handles, loc='lower left', fontsize=16, framealpha=1)
+    plt.axis('off')
+    plt.subplots_adjust(left=0.08, right=0.92, top=0.92, bottom=0.08)
+    plt.savefig(image_path)
+    plt.close()
+
 # Main menu
 while True:
     print("\n--- Graph Menu ---")
@@ -195,20 +255,30 @@ while True:
         os.system('clear')  # Clear screen for macOS/Linux
         while True:
             print("=== UNIFORM COST SEARCH (UCS) ===")
-            start = input("Enter start node: ")
-            goal = input("Enter goal node: ")
-            
+            start = input("Enter start node: ").strip().title()
+            goal = input("Enter goal node: ").strip().title()
             path, total_cost, error = uniform_cost_search(graph, start, goal)
             
             if path:
                 print("Optimal path:", " -> ".join(path))
                 print("Total cost:", total_cost)
-                
+                # Generate and show highlighted graph
+                generate_graph_image(graph, coordinates, highlight_path=path, total_cost=total_cost)
+                image_path = "graph_visualization.png"
+                try:
+                    img = Image.open(image_path)
+                    img.show()
+                    print(f"Graph visualization opened: {image_path}")
+                except FileNotFoundError:
+                    print(f"Image file not found: {image_path}")
+                    print("Please ensure the graph visualization image exists.")
+                except Exception as e:
+                    print(f"Error opening image: {e}")
                 # Prompt user to return to main menu or exit
                 while True:
                     user_choice = input("\nPress 'y' to return to main menu or 'n' to exit: ").lower()
                     if user_choice == 'y':
-                        os.system('clear')  # Clear screen before returning to main menu
+                        os.system('clear')
                         break
                     elif user_choice == 'n':
                         print("Exiting...")
@@ -224,12 +294,12 @@ while True:
                     os.system('clear')  # Clear screen before retry
                     continue
                 elif recovery_choice == "view_graph":
-                    # Dummy path for the image file
+                    # Regenerate the graph image before viewing (same as option 5)
+                    generate_graph_image(graph, coordinates)
                     image_path = "graph_visualization.png"
                     try:
-                        # Open the image using Pillow
                         img = Image.open(image_path)
-                        img.show()  # This will open the image in the default image viewer
+                        img.show()
                         print(f"Graph visualization opened: {image_path}")
                     except FileNotFoundError:
                         print(f"Image file not found: {image_path}")
@@ -237,6 +307,7 @@ while True:
                     except Exception as e:
                         print(f"Error opening image: {e}")
                     input("Press Enter to continue...")
+                    os.system('clear')
                     continue
                 elif recovery_choice == "exit_to_menu":
                     os.system('clear')  # Clear screen before returning to main menu
@@ -245,19 +316,30 @@ while True:
         os.system('clear')  # Clear screen for macOS/Linux
         while True:
             print("=== A* SEARCH ===")
-            start = input("Enter your current location: ")
-            goal = input("Enter your goal eatery: ")
+            start = input("Enter your current location: ").strip().title()
+            goal = input("Enter your goal eatery: ").strip().title()
             path, total_cost, error = a_star(graph, start, goal)
 
             if path:
                 print("Optimal path:", " -> ".join(path))
                 print("Total cost:", total_cost)
-                
+                # Generate and show highlighted graph
+                generate_graph_image(graph, coordinates, highlight_path=path, total_cost=total_cost)
+                image_path = "graph_visualization.png"
+                try:
+                    img = Image.open(image_path)
+                    img.show()
+                    print(f"Graph visualization opened: {image_path}")
+                except FileNotFoundError:
+                    print(f"Image file not found: {image_path}")
+                    print("Please ensure the graph visualization image exists.")
+                except Exception as e:
+                    print(f"Error opening image: {e}")
                 # Prompt user to return to main menu or exit
                 while True:
                     user_choice = input("\nPress 'y' to return to main menu or 'n' to exit: ").lower()
                     if user_choice == 'y':
-                        os.system('clear')  # Clear screen before returning to main menu
+                        os.system('clear')
                         break
                     elif user_choice == 'n':
                         print("Exiting...")
@@ -273,12 +355,12 @@ while True:
                     os.system('clear')  # Clear screen before retry
                     continue
                 elif recovery_choice == "view_graph":
-                    # Dummy path for the image file
+                    # Regenerate the graph image before viewing (same as option 5)
+                    generate_graph_image(graph, coordinates)
                     image_path = "graph_visualization.png"
                     try:
-                        # Open the image using Pillow
                         img = Image.open(image_path)
-                        img.show()  # This will open the image in the default image viewer
+                        img.show()
                         print(f"Graph visualization opened: {image_path}")
                     except FileNotFoundError:
                         print(f"Image file not found: {image_path}")
@@ -286,15 +368,18 @@ while True:
                     except Exception as e:
                         print(f"Error opening image: {e}")
                     input("Press Enter to continue...")
+                    os.system('clear')
                     continue
                 elif recovery_choice == "exit_to_menu":
                     os.system('clear')  # Clear screen before returning to main menu
                     break
     elif choice == "5":
-        # Dummy path for the image file
+        os.system('clear')  # Clear screen for macOS/Linux
+        print("=== VIEW GRAPH ===")
+        # Generate the graph image before viewing (no highlight)
+        generate_graph_image(graph, coordinates)
         image_path = "graph_visualization.png"
         try:
-            # Open the image using Pillow
             img = Image.open(image_path)
             img.show()  # This will open the image in the default image viewer
             print(f"Graph visualization opened: {image_path}")
@@ -303,6 +388,17 @@ while True:
             print("Please ensure the graph visualization image exists.")
         except Exception as e:
             print(f"Error opening image: {e}")
+        # Prompt user to return to main menu or exit
+        while True:
+            user_choice = input("\nPress 'y' to return to main menu or 'n' to exit: ").lower()
+            if user_choice == 'y':
+                os.system('clear')  # Clear screen before returning to main menu
+                break
+            elif user_choice == 'n':
+                print("Exiting...")
+                exit()
+            else:
+                print("Invalid input. Please enter 'y' or 'n'.")
     elif choice == "6":
         print("Exiting...")
         break
