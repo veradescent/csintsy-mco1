@@ -58,6 +58,36 @@ coordinates = {
 }
 
 # UCS
+def uniform_cost_search(graph, start, goal):
+    to_visit = []
+    heapq.heappush(to_visit, (0, start)) # Push start node to priority queue
+
+    visited = {start: None}
+    cost_so_far = {start: 0}
+
+    while to_visit:
+        current_cost, current = heapq.heappop(to_visit)
+
+        if current == goal:
+            break
+
+        for node, edge_cost in graph[current]
+            new_cost = cost_so_far[current] + edge_cost # Cost Accumulation
+            if node not in cost_so_far or new_cost < cost_so_far[node]:
+                cost_so_far[node] = new_cost
+                heapq.heappush(to_visit, (new_cost, node))
+                visited[node] = current
+
+    path = []
+    current = goal
+    while current is not None:
+        path.append(current)
+        current = visited[current]
+    path.reverse()
+
+return path, cost_so_far[goal]
+                
+                
 
 
 # A*
