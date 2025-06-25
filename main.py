@@ -72,10 +72,10 @@ def format_node_name_for_display(node_name):
     Convert node name to title case for display purposes.
     Special handling for CBTL to keep it as CBTL.
     """
+    if node_name is None:
+        return "Unknown Node"
     if node_name.lower() == "cbtl":
         return "CBTL"
-    elif node_name.lower() == "perico's":
-        return "Perico's"
     return node_name.title()
 
 node_name_map = {name.lower(): name for name in graph.keys()}
@@ -210,9 +210,9 @@ def remove_node(graph):
     clear_screen()
 
 # UCS
-def uniform_cost_search(graph, start, goal):
+def uniform_cost_search(graph, start, goal, user_start=None, user_goal=None):
     # Validate nodes first
-    is_valid, error_message = validate_nodes(graph, start, goal)
+    is_valid, error_message = validate_nodes(graph, start, goal, user_start, user_goal)
     if not is_valid:
         return None, None, error_message
     
@@ -245,24 +245,26 @@ def uniform_cost_search(graph, start, goal):
     return path, cost_so_far[goal], None
 
 # Error detection function
-def validate_nodes(graph, start, goal):
+def validate_nodes(graph, start, goal, user_start=None, user_goal=None):
     """
     Check if start and goal nodes exist in the graph and if goal is a valid eatery.
     Returns (is_valid, error_message)
     """
     if start not in graph:
-        return False, f"Start node '{format_node_name_for_display(start)}' does not exist in the graph."
+        display_name = format_node_name_for_display(user_start) if user_start else format_node_name_for_display(start)
+        return False, f"Start node '{display_name}' does not exist in the graph."
     if goal not in graph:
-        return False, f"Goal node '{format_node_name_for_display(goal)}' does not exist in the graph."
+        display_name = format_node_name_for_display(user_goal) if user_goal else format_node_name_for_display(goal)
+        return False, f"Goal node '{display_name}' does not exist in the graph."
     # Non-eatery nodes that cannot be used as end goals
     if goal in non_eatery_nodes:
         return False, f"Error: '{format_node_name_for_display(goal)}' is not an eatery and cannot be used as the end goal. Please choose a valid eatery as the goal."
     return True, ""
 
 # A*
-def a_star(graph, start, goal):
+def a_star(graph, start, goal, user_start=None, user_goal=None):
     # Validate nodes first
-    is_valid, error_message = validate_nodes(graph, start, goal)
+    is_valid, error_message = validate_nodes(graph, start, goal, user_start, user_goal)
     if not is_valid:
         return None, None, error_message
     
@@ -402,7 +404,7 @@ while True:
             user_goal = input("Enter your goal eatery: ").strip()
             start = node_name_map.get(user_start.lower())
             goal = node_name_map.get(user_goal.lower())
-            path, total_cost, error = uniform_cost_search(graph, start, goal)
+            path, total_cost, error = uniform_cost_search(graph, start, goal, user_start, user_goal)
             
             if path:
                 formatted_path = [format_node_name_for_display(node) for node in path]
@@ -458,7 +460,7 @@ while True:
             user_goal = input("Enter your goal eatery: ").strip()
             start = node_name_map.get(user_start.lower())
             goal = node_name_map.get(user_goal.lower())
-            path, total_cost, error = a_star(graph, start, goal)
+            path, total_cost, error = a_star(graph, start, goal, user_start, user_goal)
 
             if path:
                 formatted_path = [format_node_name_for_display(node) for node in path]
