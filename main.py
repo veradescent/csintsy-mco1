@@ -8,67 +8,77 @@ import matplotlib.patches as mpatches
 import platform
 
 graph = {
-    "Sherwood Place": {"Jollibee": 60},
-    "Jollibee": {"Sherwood Place": 60, "Taft-Castro": 44},
-    "Taft-Castro": {"Jollibee": 44, "Gokongwei Hall": 28, "Agno-Castro": 85},
-    "Gokongwei Hall": {"Taft-Castro": 28, "Taft-Dagonoy": 85},
-    "Agno-Castro": {"Taft-Castro": 85, "Agno Food Court": 29, "Andrew Gonzales Hall": 62},
-    "Agno Food Court": {"Agno-Castro": 29, "24 Chicken": 44},
-    "24 Chicken": {"Agno Food Court": 44, "Agno-Fidel A. Reyes": 41},
-    "Agno-Fidel A. Reyes": {"24 Chicken": 41, "Taft-Dagonoy": 80},
-    "Andrew Gonzales Hall": {"Perico's": 23, "Agno-Castro": 62},
-    "Perico's": {"The Barn": 53, "Andrew Gonzales Hall": 23},
-    "The Barn": {"Perico's": 53},
-    "Taft-Dagonoy": {"Gokongwei Hall": 85, "Tinuhog ni Benny": 59, "North Gate": 72, "Agno-Fidel A. Reyes": 80},
-    "Tinuhog ni Benny": {"Taft-Dagonoy": 59, "Leon Guinto-Dagonoy": 40},
-    "Leon Guinto-Dagonoy": {"Tinuhog ni Benny": 40, "Drip Kofi": 84},
-    "Drip Kofi": {"Leon Guinto-Dagonoy": 84, "Chomp Chomp": 35},
-    "Chomp Chomp": {"Drip Kofi": 35, "Leon Guinto-Estrada": 42},
-    "Leon Guinto-Estrada": {"Chomp Chomp": 42, "Taft-Estrada": 95},
-    "Taft-Estrada": {"South Gate": 41, "Leon Guinto-Estrada": 95, "North Gate": 99},
-    "North Gate": {"Taft-Estrada": 99, "Taft-Dagonoy": 72, "CBTL": 73},
-    "CBTL": {"North Gate": 73},
-    "South Gate": {"Taft-Estrada": 41, "McDonald's": 54, "Kitchen City": 82},
-    "McDonald's": {"South Gate": 54, "Tomo Coffee": 28},
-    "Tomo Coffee": {"McDonald's": 28},
-    "Kitchen City": {"South Gate": 82},
+    "sherwood place": {"jollibee": 60},
+    "jollibee": {"sherwood place": 60, "taft-castro": 44},
+    "taft-castro": {"jollibee": 44, "gokongwei hall": 28, "agno-castro": 85},
+    "gokongwei hall": {"taft-castro": 28, "taft-dagonoy": 85},
+    "agno-castro": {"taft-castro": 85, "agno food court": 29, "andrew gonzales hall": 62},
+    "agno food court": {"agno-castro": 29, "24 chicken": 44},
+    "24 chicken": {"agno food court": 44, "agno-fidel a. reyes": 41},
+    "agno-fidel a. reyes": {"24 chicken": 41, "taft-dagonoy": 80},
+    "andrew gonzales hall": {"perico's": 23, "agno-castro": 62},
+    "perico's": {"the barn": 53, "andrew gonzales hall": 23},
+    "the barn": {"perico's": 53},
+    "taft-dagonoy": {"gokongwei hall": 85, "tinuhog ni benny": 59, "north gate": 72, "agno-fidel a. reyes": 80},
+    "tinuhog ni benny": {"taft-dagonoy": 59, "leon guinto-dagonoy": 40},
+    "leon guinto-dagonoy": {"tinuhog ni benny": 40, "drip kofi": 84},
+    "drip kofi": {"leon guinto-dagonoy": 84, "chomp chomp": 35},
+    "chomp chomp": {"drip kofi": 35, "leon guinto-estrada": 42},
+    "leon guinto-estrada": {"chomp chomp": 42, "taft-estrada": 95},
+    "taft-estrada": {"south gate": 41, "leon guinto-estrada": 95, "north gate": 99},
+    "north gate": {"taft-estrada": 99, "taft-dagonoy": 72, "cbtl": 73},
+    "cbtl": {"north gate": 73},
+    "south gate": {"taft-estrada": 41, "mcdonald's": 54, "kitchen city": 82},
+    "mcdonald's": {"south gate": 54, "tomo coffee": 28},
+    "tomo coffee": {"mcdonald's": 28},
+    "kitchen city": {"south gate": 82},
 }
 
 coordinates = {
-    "Sherwood Place": (14.56757, 120.99283),
-    "Jollibee": (14.56709, 120.99308),
-    "Taft-Castro": (14.56672, 120.99324),
-    "Gokongwei Hall": (14.56648, 120.99336),
-    "Agno-Castro": (14.56641, 120.99252),
-    "Agno Food Court": (14.56619, 120.99265),
-    "24 Chicken": (14.56585, 120.99284),
-    "Agno-Fidel A. Reyes": (14.56554, 120.99299),
-    "Andrew Gonzales Hall": (14.56692, 120.99228),
-    "Perico's": (14.5671, 120.99218),
-    "The Barn": (14.56754, 120.99197),
-    "Taft-Dagonoy": (14.56577, 120.9937),
-    "Tinuhog ni Benny": (14.56598, 120.99419),
-    "Leon Guinto-Dagonoy": (14.56611, 120.99454),
-    "Drip Kofi": (14.56542, 120.99489),
-    "Chomp Chomp": (14.56512, 120.99501),
-    "Leon Guinto-Estrada": (14.56477, 120.99516),
-    "Taft-Estrada": (14.5644, 120.99435),
-    "North Gate": (14.56518, 120.99396),
-    "CBTL": (14.56497, 120.99333),
-    "South Gate": (14.56409, 120.99449),
-    "McDonald's": (14.56363, 120.99465),
-    "Tomo Coffee": (14.56342, 120.99476),
-    "Kitchen City": (14.56382, 120.99379),
+    "sherwood place": (14.56757, 120.99283),
+    "jollibee": (14.56709, 120.99308),
+    "taft-castro": (14.56672, 120.99324),
+    "gokongwei hall": (14.56648, 120.99336),
+    "agno-castro": (14.56641, 120.99252),
+    "agno food court": (14.56619, 120.99265),
+    "24 chicken": (14.56585, 120.99284),
+    "agno-fidel a. reyes": (14.56554, 120.99299),
+    "andrew gonzales hall": (14.56692, 120.99228),
+    "perico's": (14.5671, 120.99218),
+    "the barn": (14.56754, 120.99197),
+    "taft-dagonoy": (14.56577, 120.9937),
+    "tinuhog ni benny": (14.56598, 120.99419),
+    "leon guinto-dagonoy": (14.56611, 120.99454),
+    "drip kofi": (14.56542, 120.99489),
+    "chomp chomp": (14.56512, 120.99501),
+    "leon guinto-estrada": (14.56477, 120.99516),
+    "taft-estrada": (14.5644, 120.99435),
+    "north gate": (14.56518, 120.99396),
+    "cbtl": (14.56497, 120.99333),
+    "south gate": (14.56409, 120.99449),
+    "mcdonald's": (14.56363, 120.99465),
+    "tomo coffee": (14.56342, 120.99476),
+    "kitchen city": (14.56382, 120.99379),
 }
 
 # List of non-eatery nodes that cannot be used as end goals
 non_eatery_nodes = {
-    "Gokongwei Hall", "Taft-Castro", "Agno-Castro", "Agno-Fidel A. Reyes", "Taft-Dagonoy",
-    "Leon Guinto-Dagonoy", "Leon Guinto-Estrada", "Taft-Estrada", "North Gate", "South Gate"
+    "gokongwei hall", "taft-castro", "agno-castro", "agno-fidel a. reyes", "taft-dagonoy",
+    "leon guinto-dagonoy", "leon guinto-estrada", "taft-estrada", "north gate", "south gate"
 }
 
-node_name_map = {name.lower(): name for name in graph.keys()}
+def format_node_name_for_display(node_name):
+    """
+    Convert node name to title case for display purposes.
+    Special handling for CBTL to keep it as CBTL.
+    """
+    if node_name.lower() == "cbtl":
+        return "CBTL"
+    elif node_name.lower() == "perico's":
+        return "Perico's"
+    return node_name.title()
 
+node_name_map = {name.lower(): name for name in graph.keys()}
 def clear_screen():
     os.system('cls' if platform.system() == 'Windows' else 'clear')
 
@@ -78,7 +88,7 @@ def add_node(graph):
     new_node = input("Enter the name of the new node: ").strip()
 
     if new_node in graph:
-        print(f"Node '{new_node}' already exists.")
+        print(f"Node '{format_node_name_for_display(new_node)}' already exists.")
     else:
         while True:
             try:
@@ -87,7 +97,7 @@ def add_node(graph):
                 coordinates[new_node] = (x, y)
                 break
             except ValueError:
-                print("Invalid coordinates. Please enter numeric values for X and Y.")
+                print("Invalid coordinates. Please enter numeric values for X and Y.\n")
 
         is_non_eatery = input("Is this a NON-eatery node? (y/n): ").strip().lower()
         if is_non_eatery == "y":
@@ -95,24 +105,30 @@ def add_node(graph):
 
         graph[new_node] = {}
         node_name_map[new_node.lower()] = new_node
-        print(f"\nNode '{new_node}' has been added with coordinates ({x}, {y}).")
+        print(f"\nNode '{format_node_name_for_display(new_node)}' has been added with coordinates ({x}, {y}).")
+        print("\nNote: You must connect this node to at least one other node before finishing.")
 
         while True:
             connect_to = input("Enter a node to connect to (or type 'done' to finish): ").strip()
             if connect_to.lower() == 'done':
+                # Check if the new node has at least one connection
+                if len(graph[new_node]) == 0:
+                    print(f"Error: Node '{format_node_name_for_display(new_node)}' must have at least one connection before finishing.")
+                    print("Please connect it to at least one other node.\n")
+                    continue
                 break
             existing_node = node_name_map.get(connect_to.lower())
             if existing_node is None:
-                print(f"Node '{connect_to}' does not exist. Please enter a valid node.")
+                print(f"Node '{format_node_name_for_display(connect_to)}' does not exist. Please enter a valid node.\n")
                 continue
             try:
-                cost = int(input(f"Enter cost from '{new_node}' to '{existing_node}': "))
+                cost = int(input(f"Enter cost from '{format_node_name_for_display(new_node)}' to '{format_node_name_for_display(existing_node)}': "))
             except ValueError:
-                print("Invalid cost. Please enter a number.")
+                print("Invalid cost. Please enter a number.\n")
                 continue
             graph[new_node][existing_node] = cost
             graph[existing_node][new_node] = cost
-            print(f"Connected '{new_node}' <-> '{existing_node}' with cost {cost}.")
+            print(f"Connected '{format_node_name_for_display(new_node)}' <-> '{format_node_name_for_display(existing_node)}' with cost {cost}.\n")
 
     input("\nPress Enter to return to the main menu...")
     clear_screen()
@@ -125,19 +141,73 @@ def remove_node(graph):
     real_node = node_name_map.get(node_to_remove.lower())
 
     if real_node is None or real_node not in graph:
-        print(f"Error: Node '{node_to_remove}' does not exist in the graph.")
-        input("Press Enter to return to the menu...")
+        print(f"Error: Node '{format_node_name_for_display(node_to_remove)}' does not exist in the graph.\n")
+        input("\nPress Enter to return to the menu...")
+        clear_screen()
         return
 
-    for neighbor in list(graph[real_node].keys()):
+    # Get the neighbors of the node to be removed
+    neighbors = list(graph[real_node].keys())
+    
+    # Remove connections from neighbors to the target node
+    for neighbor in neighbors:
         graph[neighbor].pop(real_node, None)
+    
+    # Remove the target node
     graph.pop(real_node)
+    
+    # Find all nodes that are still connected to the main graph
+    # Start from any remaining node (not the removed one or its neighbors)
+    remaining_nodes = set(graph.keys()) - set(neighbors)
+    if remaining_nodes:
+        # Use BFS to find all connected nodes from a starting node
+        start_node = next(iter(remaining_nodes))
+        connected_nodes = set()
+        to_visit = [start_node]
+        visited = set()
+        
+        while to_visit:
+            current = to_visit.pop(0)
+            if current in visited:
+                continue
+            visited.add(current)
+            connected_nodes.add(current)
+            
+            for neighbor in graph[current]:
+                if neighbor not in visited:
+                    to_visit.append(neighbor)
+        
+        # Find disconnected nodes (nodes not in connected_nodes)
+        all_nodes = set(graph.keys())
+        disconnected_nodes = all_nodes - connected_nodes
+        
+        # Remove disconnected nodes
+        for node in disconnected_nodes:
+            graph.pop(node)
+            coordinates.pop(node, None)
+            node_name_map.pop(node.lower(), None)
+            non_eatery_nodes.discard(node)
+    else:
+        # If no remaining nodes, all neighbors are disconnected
+        disconnected_nodes = set(neighbors)
+        for node in disconnected_nodes:
+            graph.pop(node)
+            coordinates.pop(node, None)
+            node_name_map.pop(node.lower(), None)
+            non_eatery_nodes.discard(node)
 
+    # Remove the target node from other data structures
     coordinates.pop(real_node, None)
     node_name_map.pop(real_node.lower(), None)
+    non_eatery_nodes.discard(real_node)
 
-    print(f"Node '{real_node}' removed successfully.")
+    # Display results
+    print(f"Node '{format_node_name_for_display(real_node)}' removed successfully.")
+    if disconnected_nodes:
+        print(f"Also removed disconnected nodes: {', '.join([format_node_name_for_display(node) for node in disconnected_nodes])}")
+    print()
     input("Press Enter to return to the menu...")
+    clear_screen()
 
 # UCS
 def uniform_cost_search(graph, start, goal):
@@ -181,12 +251,12 @@ def validate_nodes(graph, start, goal):
     Returns (is_valid, error_message)
     """
     if start not in graph:
-        return False, f"Start node '{start}' does not exist in the graph."
+        return False, f"Start node '{format_node_name_for_display(start)}' does not exist in the graph."
     if goal not in graph:
-        return False, f"Goal node '{goal}' does not exist in the graph."
+        return False, f"Goal node '{format_node_name_for_display(goal)}' does not exist in the graph."
     # Non-eatery nodes that cannot be used as end goals
     if goal in non_eatery_nodes:
-        return False, f"Error: '{goal}' is not an eatery and cannot be used as the end goal. Please choose a valid eatery as the goal."
+        return False, f"Error: '{format_node_name_for_display(goal)}' is not an eatery and cannot be used as the end goal. Please choose a valid eatery as the goal."
     return True, ""
 
 # A*
@@ -285,8 +355,10 @@ def generate_graph_image(graph, coordinates, image_path="graph_visualization.png
     if highlight_path and len(highlight_path) > 1:
         path_edges = list(zip(highlight_path, highlight_path[1:]))
         nx.draw_networkx_edges(G, pos, edgelist=path_edges, edge_color='red', width=3, alpha=0.5)
+    # Create formatted labels for display
+    labels = {node: format_node_name_for_display(node) for node in G.nodes()}
     # Draw all edges in gray and nodes/labels on top
-    nx.draw(G, pos, with_labels=True, node_color=node_colors, edge_color='gray', node_size=1400, font_size=12)
+    nx.draw(G, pos, with_labels=True, labels=labels, node_color=node_colors, edge_color='gray', node_size=1400, font_size=12)
     edge_labels = nx.get_edge_attributes(G, 'weight')
     nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels, font_size=10)
     # Add total cost as text on the image if provided
@@ -316,7 +388,7 @@ while True:
     print("5) View Graph")
     print("6) Exit")
 
-    choice = input("Choose an option: ")
+    choice = input("\nChoose an option: ")
 
     if choice == "1":
         add_node(graph)
@@ -333,7 +405,8 @@ while True:
             path, total_cost, error = uniform_cost_search(graph, start, goal)
             
             if path:
-                print("Optimal path:", " -> ".join(path))
+                formatted_path = [format_node_name_for_display(node) for node in path]
+                print("\nOptimal path:", " -> ".join(formatted_path))
                 print("Total cost:", total_cost)
                 # Generate and show highlighted graph
                 generate_graph_image(graph, coordinates, highlight_path=path, total_cost=total_cost)
@@ -341,23 +414,15 @@ while True:
                 try:
                     img = Image.open(image_path)
                     img.show()
-                    print(f"Graph visualization opened: {image_path}")
+                    print(f"\nGraph visualization opened: {image_path}")
                 except FileNotFoundError:
-                    print(f"Image file not found: {image_path}")
+                    print(f"\nImage file not found: {image_path}")
                     print("Please ensure the graph visualization image exists.")
                 except Exception as e:
-                    print(f"Error opening image: {e}")
+                    print(f"\nError opening image: {e}")
                 # Prompt user to return to main menu or exit
-                while True:
-                    user_choice = input("\nPress 'y' to return to main menu or 'n' to exit: ").lower()
-                    if user_choice == 'y':
-                        clear_screen()
-                        break
-                    elif user_choice == 'n':
-                        print("Exiting...")
-                        exit()
-                    else:
-                        print("Invalid input. Please enter 'y' or 'n'.")
+                input("\nPress Enter to return to the menu...")
+                clear_screen()
                 break
             else:
                 print(error)
@@ -396,7 +461,8 @@ while True:
             path, total_cost, error = a_star(graph, start, goal)
 
             if path:
-                print("Optimal path:", " -> ".join(path))
+                formatted_path = [format_node_name_for_display(node) for node in path]
+                print("\nOptimal path:", " -> ".join(formatted_path))
                 print("Total cost:", total_cost)
                 # Generate and show highlighted graph
                 generate_graph_image(graph, coordinates, highlight_path=path, total_cost=total_cost)
@@ -404,23 +470,15 @@ while True:
                 try:
                     img = Image.open(image_path)
                     img.show()
-                    print(f"Graph visualization opened: {image_path}")
+                    print(f"\nGraph visualization opened: {image_path}")
                 except FileNotFoundError:
-                    print(f"Image file not found: {image_path}")
+                    print(f"\nImage file not found: {image_path}")
                     print("Please ensure the graph visualization image exists.")
                 except Exception as e:
-                    print(f"Error opening image: {e}")
+                    print(f"\nError opening image: {e}")
                 # Prompt user to return to main menu or exit
-                while True:
-                    user_choice = input("\nPress 'y' to return to main menu or 'n' to exit: ").lower()
-                    if user_choice == 'y':
-                        clear_screen()
-                        break
-                    elif user_choice == 'n':
-                        print("Exiting...")
-                        exit()
-                    else:
-                        print("Invalid input. Please enter 'y' or 'n'.")
+                input("\nPress Enter to return to the menu...")
+                clear_screen()
                 break
             else:
                 print(error)
@@ -464,16 +522,8 @@ while True:
         except Exception as e:
             print(f"Error opening image: {e}")
         # Prompt user to return to main menu or exit
-        while True:
-            user_choice = input("\nPress 'y' to return to main menu or 'n' to exit: ").lower()
-            if user_choice == 'y':
-                clear_screen()  # Clear screen before returning to main menu
-                break
-            elif user_choice == 'n':
-                print("Exiting...")
-                exit()
-            else:
-                print("Invalid input. Please enter 'y' or 'n'.")
+        input("\nPress Enter to return to the menu...")
+        clear_screen()
     elif choice == "6":
         print("Exiting...")
         break
