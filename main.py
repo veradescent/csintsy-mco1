@@ -6,6 +6,8 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import platform
+import time # For timing
+import tracemalloc # For memory usage
 
 graph = {
     "sherwood place": {"jollibee": 60},
@@ -76,6 +78,8 @@ def format_node_name_for_display(node_name):
         return "Unknown Node"
     if node_name.lower() == "cbtl":
         return "CBTL"
+    if node_name.lower() == "perico's":
+        return "Perico's"
     return node_name.title()
 
 node_name_map = {name.lower(): name for name in graph.keys()}
@@ -214,17 +218,24 @@ def uniform_cost_search(graph, start, goal, user_start=None, user_goal=None):
     # Validate nodes first
     is_valid, error_message = validate_nodes(graph, start, goal, user_start, user_goal)
     if not is_valid:
-        return None, None, error_message
+        return None, None, error_message, None, None, None
     
     to_visit = []
     heapq.heappush(to_visit, (0, start)) # Push start node to priority queue
 
     visited = {start: None}
     cost_so_far = {start: 0}
+    nodes_visited = 0
+    tracemalloc.start()
+    start_time = time.perf_counter()
+    peak_memory = 0
 
     while to_visit:
         current_cost, current = heapq.heappop(to_visit)
-
+        nodes_visited += 1
+        current_mem = tracemalloc.get_traced_memory()[1]
+        if current_mem > peak_memory:
+            peak_memory = current_mem
         if current == goal:
             break
 
@@ -235,6 +246,9 @@ def uniform_cost_search(graph, start, goal, user_start=None, user_goal=None):
                 heapq.heappush(to_visit, (new_cost, node))
                 visited[node] = current
 
+    end_time = time.perf_counter()
+    tracemalloc.stop()
+    elapsed_time = end_time - start_time
     # Trace optimal path
     path = []
     current = goal
@@ -242,7 +256,7 @@ def uniform_cost_search(graph, start, goal, user_start=None, user_goal=None):
         path.append(current)
         current = visited[current]
     path.reverse()
-    return path, cost_so_far[goal], None
+    return path, cost_so_far[goal], None, nodes_visited, elapsed_time, peak_memory
 
 # Error detection function
 def validate_nodes(graph, start, goal, user_start=None, user_goal=None):
@@ -266,17 +280,24 @@ def a_star(graph, start, goal, user_start=None, user_goal=None):
     # Validate nodes first
     is_valid, error_message = validate_nodes(graph, start, goal, user_start, user_goal)
     if not is_valid:
-        return None, None, error_message
+        return None, None, error_message, None, None, None
     
     to_visit = [] 
     heapq.heappush(to_visit, (0, start)) # Push start node to priority queue
 
     visited = {start: None}
     cost_so_far = {start: 0} 
+    nodes_visited = 0
+    tracemalloc.start()
+    start_time = time.perf_counter()
+    peak_memory = 0
       
     while to_visit:
         current_priority, current = heapq.heappop(to_visit)
-
+        nodes_visited += 1
+        current_mem = tracemalloc.get_traced_memory()[1]
+        if current_mem > peak_memory:
+            peak_memory = current_mem
         if current == goal:
             break
         
@@ -291,6 +312,9 @@ def a_star(graph, start, goal, user_start=None, user_goal=None):
                 heapq.heappush(to_visit, (priority, node)) # Push node to priority queue
                 visited[node] = current
 
+    end_time = time.perf_counter()
+    tracemalloc.stop()
+    elapsed_time = end_time - start_time
     # Trace optimal path
     path = []
     current = goal
@@ -299,7 +323,7 @@ def a_star(graph, start, goal, user_start=None, user_goal=None):
         current = visited[current]
     path.reverse()
 
-    return path, cost_so_far[goal], None
+    return path, cost_so_far[goal], None, nodes_visited, elapsed_time, peak_memory
 
 # Error recovery function
 def handle_error_recovery():
@@ -404,12 +428,15 @@ while True:
             user_goal = input("Enter your goal eatery: ").strip()
             start = node_name_map.get(user_start.lower())
             goal = node_name_map.get(user_goal.lower())
-            path, total_cost, error = uniform_cost_search(graph, start, goal, user_start, user_goal)
+            path, total_cost, error, nodes_visited, elapsed_time, peak_memory = uniform_cost_search(graph, start, goal, user_start, user_goal)
             
             if path:
                 formatted_path = [format_node_name_for_display(node) for node in path]
                 print("\nOptimal path:", " -> ".join(formatted_path))
                 print("Total cost:", total_cost)
+                print(f"Nodes visited: {nodes_visited}")
+                print(f"Time taken: {elapsed_time:.6f} seconds")
+                print(f"Peak memory usage: {peak_memory / 1024:.2f} KB")
                 # Generate and show highlighted graph
                 generate_graph_image(graph, coordinates, highlight_path=path, total_cost=total_cost)
                 image_path = "graph_visualization.png"
@@ -460,12 +487,15 @@ while True:
             user_goal = input("Enter your goal eatery: ").strip()
             start = node_name_map.get(user_start.lower())
             goal = node_name_map.get(user_goal.lower())
-            path, total_cost, error = a_star(graph, start, goal, user_start, user_goal)
+            path, total_cost, error, nodes_visited, elapsed_time, peak_memory = a_star(graph, start, goal, user_start, user_goal)
 
             if path:
                 formatted_path = [format_node_name_for_display(node) for node in path]
                 print("\nOptimal path:", " -> ".join(formatted_path))
                 print("Total cost:", total_cost)
+                print(f"Nodes visited: {nodes_visited}")
+                print(f"Time taken: {elapsed_time:.6f} seconds")
+                print(f"Peak memory usage: {peak_memory / 1024:.2f} KB")
                 # Generate and show highlighted graph
                 generate_graph_image(graph, coordinates, highlight_path=path, total_cost=total_cost)
                 image_path = "graph_visualization.png"
